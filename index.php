@@ -10,19 +10,21 @@ define("PYTHON_PATH", "/usr/bin/python3");
 define("APP_BIN", __DIR__ . "/bin");
 define("DOWNLOAD_PATH", __DIR__ . "/files");
 define("ADMINS_ID", ["1069225", "91416644"]);
-define("‌TOKEN", "TOKEN HERE");
+define("‌TOKEN", "956711743:AAFFdGFskUekAmNnyUrbH2gEUu22Fs0w_xc");
 // define("CHANNEL_ID", "-1001378347176");
-define("CHANNEL_ID", "-1001144200514");
+// define("CHANNEL_ID", "-1001144200514");
 // End HardCoded Env :)
 
 // $mp3_file = Youtube::download("https://www.youtube.com/watch?v=FtCi7xT9Le4");
 // var_dump($mp3_file);
-$rs = Telegram::send_photo(
-    "91416644",
-    "/Users/office/public_html/ArabicMadihTg/files/1443-عينٌ بكت _ حسين فيصل _ محرم 1443.jpg",
+$rs = new Telegram;
+
+$rs->send_file_request(
+    476080724,
+    "/home/smtz/Projects/Zanjani-022.png",
     "BOT TEST"
 );
-// $rs = Telegram::send_message("hell", "91416644");
+// $rs = Telegram::send_message("hell", "476080724");
 
 var_dump($rs);
 // foreach ($mp3_file as $file) {
