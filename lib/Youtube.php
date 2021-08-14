@@ -25,10 +25,11 @@ class Youtube
         foreach ($collection->getVideos() as $video) {
             if ($video->getError() !== null) {
                 echo "Error downloading video: {$video->getError()}.";
+                continue;
             } else {
                 echo $video->getTitle(); // Will return Phonebloks
                 $file = $video->getFile(); // \SplFileInfo instance of downloaded file
-                $files[] = $file->getPathname();
+                $files[] = ["mp3" => $file->getPathname(), "title" => $video->getTitle()];
             }
         }
         return $files;

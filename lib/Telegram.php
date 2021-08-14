@@ -53,7 +53,9 @@ class Telegram
     {
         self::init();
         $param = $_param;
-        $param["headers"] = ["Content-Type" => "application/json"];
+        // if (!isset($param["headers"])) {
+        //     $param["headers"] = ["Content-Type" => "application/json"];
+        // }
         // $param["curl"] = [CURLOPT_PROXYTYPE => 7];
         // $param["proxy"] = "127.0.0.1:9050";
         try {
@@ -90,7 +92,7 @@ class Telegram
      *
      * @return  []                     [return description]
      */
-    public static function send_message(string $_message, string $_chat_id, array $reply_markup = [])
+    public static function send_message(string $_message, $_chat_id, array $reply_markup = [])
     {
         $query = [
             "chat_id" => $_chat_id,
@@ -135,7 +137,7 @@ class Telegram
      *
      * @return  array
      */
-    public static function forward(string $_chat_id, string $_from_chat_id, string $_message_id)
+    public static function forward($_chat_id, $_from_chat_id, $_message_id)
     {
         $query = [
             "chat_id" => $_chat_id,
@@ -148,7 +150,7 @@ class Telegram
         ]);
     }
 
-    public static function delete_message(string $_message_id, string $_chat_id)
+    public static function delete_message($_message_id, $_chat_id)
     {
         $query = [
             "chat_id" => $_chat_id,
@@ -169,9 +171,16 @@ class Telegram
      *
      * @return  [type]             [return description]
      */
-    public static function send_file(string $_chat_id, string $_path, string $_caption, string $_thumb = null)
+    public static function send_file($_chat_id, string $_path, string $_caption, string $_thumb = null)
     {
-        var_dump(file_exists($_path));
+        $thumb = null;
+        if (file_exists($_thumb)) {
+            $thumb = [
+                "Content-type" => "multipart/form-data",
+                "name" => "thumb",
+                "contents" => fopen($_thumb, "r"),
+            ];
+        }
         return self::execute("sendDocument", [
             "multipart" => [
                 ["name" => "chat_id", "contents" => $_chat_id],
@@ -180,10 +189,7 @@ class Telegram
                     "name" => "document",
                     "contents" => fopen($_path, "r"),
                 ],
-                // [
-                //     "name" => "thumb",
-                //     "contents" => fopen($_path, "r"),
-                // ],
+                $thumb,
                 [
                     "name" => "caption",
                     "contents" => $_caption,
@@ -192,10 +198,8 @@ class Telegram
         ]);
     }
 
-    public static function send_photo(string $_chat_id, string $_path, string $_caption, string $_thumb = null)
+    public static function send_photo($_chat_id, string $_path, string $_caption, string $_thumb = null)
     {
-        var_dump(fopen($_path, "r"));
-        die();
         return self::execute("sendPhoto", [
             "multipart" => [
                 ["name" => "chat_id", "contents" => $_chat_id],

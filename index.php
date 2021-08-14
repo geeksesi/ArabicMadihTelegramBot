@@ -12,18 +12,55 @@ define("DOWNLOAD_PATH", __DIR__ . "/files");
 define("ADMINS_ID", ["1069225", "91416644"]);
 define("‌TOKEN", "TOKEN HERE");
 // define("CHANNEL_ID", "-1001378347176");
-define("CHANNEL_ID", "-1001144200514");
+define("CHANNEL_ID", "-1001378347176");
 // End HardCoded Env :)
 
-// $mp3_file = Youtube::download("https://www.youtube.com/watch?v=FtCi7xT9Le4");
-// var_dump($mp3_file);
-$rs = Telegram::send_photo(
-    "91416644",
-    "/Users/office/public_html/ArabicMadihTg/files/1443-عينٌ بكت _ حسين فيصل _ محرم 1443.jpg",
-    "BOT TEST"
-);
-// $rs = Telegram::send_message("hell", "91416644");
+function proccess($_link)
+{
+    $mp3_file = Youtube::download($_link);
 
-var_dump($rs);
-// foreach ($mp3_file as $file) {
-// }
+    foreach ($mp3_file as $file) {
+        $message = $file["title"] . "\n\n";
+        $message .= $_link . "\n\n";
+        $message .= "@ArabicMadih" . "\n";
+
+        Telegram::send_file(CHANNEL_ID, $file["mp3"], $message, str_replace("mp3", "jpg", $file["mp3"]));
+    }
+}
+
+($myfile = fopen(__DIR__ . "/files/offset.txt", "r")) or die("Unable to open file!");
+$offset = fread($myfile, filesize(__DIR__ . "/files/offset.txt"));
+fclose($myfile);
+$offset = intval($offset);
+$updates = Telegram::getUpdates($offset);
+$here = false;
+foreach ($updates["result"] as $update) {
+    $here = true;
+    $offset = $update["update_id"];
+    if (!in_array($update["message"]["from"]["id"], ADMINS_ID)) {
+        Telegram::forward(ADMINS_ID[1], $update["message"]["from"]["id"], $update["message"]["message_id"]);
+        Telegram::send_message(
+            "ADMIN WILL RECIVE YOUR MESSAGE, THANK YOU FOR CONTRIBUTE.",
+            $update["message"]["from"]["id"]
+        );
+        return;
+    }
+    if (filter_var($update["message"]["text"], FILTER_VALIDATE_URL)) {
+        // var_dump();
+        Telegram::send_message("IN PROCCESS", $update["message"]["from"]["id"]);
+        try {
+            proccess($update["message"]["text"]);
+        } catch (\Throwable $th) {
+            echo "Some Error \n";
+        }
+        return;
+    }
+    Telegram::send_message("UNDEFINE MESSAGE. JUST LINK", $update["message"]["from"]["id"]);
+    // die();
+}
+if ($here) {
+    $offset++;
+}
+($myfile = fopen(__DIR__ . "/files/offset.txt", "w")) or die("Unable to open file!");
+fwrite($myfile, (string) $offset);
+fclose($myfile);
