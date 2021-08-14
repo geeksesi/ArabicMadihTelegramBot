@@ -43,23 +43,24 @@ foreach ($updates["result"] as $update) {
             "ADMIN WILL RECIVE YOUR MESSAGE, THANK YOU FOR CONTRIBUTE.",
             $update["message"]["from"]["id"]
         );
-        return;
-    }
-    if (filter_var($update["message"]["text"], FILTER_VALIDATE_URL)) {
-        // var_dump();
-        Telegram::send_message("IN PROCCESS", $update["message"]["from"]["id"]);
-        try {
-            proccess($update["message"]["text"]);
-        } catch (\Throwable $th) {
-            echo "Some Error \n";
+    } else {
+        if (filter_var($update["message"]["text"], FILTER_VALIDATE_URL)) {
+            Telegram::send_message("IN PROCCESS", $update["message"]["from"]["id"]);
+            try {
+                proccess($update["message"]["text"]);
+            } catch (\Throwable $th) {
+                echo "Some Error \n";
+            }
+        } else {
+            Telegram::send_message("UNDEFINE MESSAGE. JUST LINK", $update["message"]["from"]["id"]);
         }
-        return;
     }
-    Telegram::send_message("UNDEFINE MESSAGE. JUST LINK", $update["message"]["from"]["id"]);
     // die();
 }
 if ($here) {
+    echo "\nHERE" . $offset;
     $offset++;
+    echo "\nAFTER" . $offset;
 }
 ($myfile = fopen(__DIR__ . "/files/offset.txt", "w")) or die("Unable to open file!");
 fwrite($myfile, (string) $offset);
