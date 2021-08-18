@@ -219,4 +219,35 @@ class Telegram
             ],
         ]);
     }
+
+    public static function send_audio($_chat_id, string $_path, string $_caption, string $_title, string $_thumb = null)
+    {
+        $thumb = null;
+        if (file_exists($_thumb)) {
+            $thumb = [
+                "Content-type" => "multipart/form-data",
+                "name" => "thumb",
+                "contents" => fopen($_thumb, "r"),
+            ];
+        }
+        return self::execute("sendAudio", [
+            "multipart" => [
+                ["name" => "chat_id", "contents" => $_chat_id],
+                [
+                    "Content-type" => "multipart/form-data",
+                    "name" => "audio",
+                    "contents" => fopen($_path, "r"),
+                ],
+                $thumb,
+                [
+                    "name" => "caption",
+                    "contents" => $_caption,
+                ],
+                [
+                    "name" => "title",
+                    "contents" => $_title,
+                ],
+            ],
+        ]);
+    }
 }

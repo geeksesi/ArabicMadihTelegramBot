@@ -12,7 +12,7 @@ define("DOWNLOAD_PATH", __DIR__ . "/files");
 define("ADMINS_ID", ["1069225", "91416644"]);
 define("‌TOKEN", "TOKEN HERE");
 // define("CHANNEL_ID", "-1001378347176");
-define("CHANNEL_ID", "-1001378347176");
+define("CHANNEL_ID", "91416644");
 // End HardCoded Env :)
 
 function proccess($_link)
@@ -24,7 +24,13 @@ function proccess($_link)
         $message .= $_link . "\n\n";
         $message .= "@ArabicMadih" . "\n";
 
-        Telegram::send_file(CHANNEL_ID, $file["mp3"], $message, str_replace("mp3", "jpg", $file["mp3"]));
+        Telegram::send_audio(
+            CHANNEL_ID,
+            $file["mp3"],
+            $message,
+            $file["title"],
+            str_replace("mp3", "jpg", $file["mp3"])
+        );
     }
 }
 
